@@ -1,0 +1,7 @@
+.card{
+  width: 400px;
+}
+.campo-desativado {
+  background-color: #f2f2f2; 
+  cursor: not-allowed;
+}

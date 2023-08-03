@@ -1,0 +1,192 @@
+<div class="registro d-flex align-items-center justify-content-center mt-3 mb-5">
+  <div class="card">
+    <div class="card-header">
+      {{ idUsuario ? 'Editar usuário' : 'Cadastrar usuário' }}
+    </div>
+    <div class="card-body">
+      <form [formGroup] = "formulario" (ngSubmit)="cadastrarUsuario()">
+        <div class="form-group p-2 row">
+          <label class="col-3" for="inputName">Nome:</label>
+          <div class="col-9">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nome"
+              formControlName = "name"
+              [ngClass]="{
+                'is-invalid': isFormSubmitted && formulario.controls['name'].errors?.['required']
+              }"
+            >
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['name'].errors?.['required']">
+              <p class="error-message">Nome é obrigatório</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <label class="col-3" for="inputName">Nome de usuário:</label>
+          <div class="col-9">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nome de usuário"
+              formControlName = "userName"
+              [ngClass]="{
+                'is-invalid': isFormSubmitted && formulario.controls['userName'].errors?.['required'] ||
+                isFormSubmitted && formulario.controls['userName'].errors?.['minlength'] ||
+                isFormSubmitted && formulario.get('userName')?.hasError('usernameTaken')
+              }"
+            >
+            <div class="invalid-feedback">
+              <div *ngIf="isFormSubmitted && formulario.controls['userName'].errors?.['required']">
+                <p class="error-message">Nome de Usuário é obrigatório</p>
+              </div>
+              <div *ngIf="isFormSubmitted && formulario.controls['userName'].errors?.['minlength']">
+                <p class="error-message">Nome Usuario deve ter no minimo 8 caracteres</p>
+              </div>
+              <div *ngIf="isFormSubmitted && formulario.get('userName')?.hasError('usernameTaken')">
+                <p class="error-message">Nome de usuário já está em uso</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <label class="col-3" for="inputName">E-mail:</label>
+          <div class="col-9">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="E-mail"
+              formControlName = "email"
+              [ngClass]="{
+                'is-invalid': isFormSubmitted && formulario.controls['email'].errors?.['required'] ||
+                isFormSubmitted && formulario.controls['email'].errors?.['email'] ||
+                isFormSubmitted && formulario.controls['email'].errors?.['emailTaken']
+              }"
+            >
+            <div class="invalid-feedback">
+              <div *ngIf="isFormSubmitted && formulario.controls['email'].errors?.['required']">
+                <p class="error-message">E-mail é obrigatório</p>
+              </div>
+              <div *ngIf="isFormSubmitted && formulario.controls['email'].errors?.['email']">
+                <p class="error-message">E-mail inválido</p>
+              </div>
+              <div *ngIf="isFormSubmitted && formulario.controls['email'].errors?.['emailTaken']">
+                <p class="error-message">E-mail já está em uso</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <label class="col-3" for="inputName">Ramal</label>
+          <div class="col-3">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ramal"
+              maxlength="4"
+              placeholder="0000"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['ramal'].errors?.['required'] ||
+              isFormSubmitted && formulario.controls['ramal'].errors?.['pattern']
+            }"
+            >
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['ramal'].errors?.['required']">
+              <p class="error-message">Ramal é obrigatório</p>
+            </div>
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['ramal'].errors?.['pattern']">
+              <p class="error-message">Somente números</p>
+            </div>
+          </div>
+
+          <label class="col-3" for="inputName">Nivel de Permissão:</label>
+          <div class="col-3">
+            <select
+              formControlName="nivelPermissao"
+              class="form-select form-select"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['nivelPermissao'].errors?.['required'] }"
+            >
+              <option *ngFor="let permissao of permissoes" [value]="permissao.valor">
+                {{ permissao.name }}
+              </option>
+            </select>
+
+            <div class="invalid-feedback">
+              <div *ngIf="isFormSubmitted && formulario.controls['nivelPermissao'].errors?.['required']">
+                <p class="error-message ">Nivel de permissão é obrigatório</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row" *ngIf="!idUsuario">
+          <label class="col-3" for="inputName">Senha</label>
+          <div class="col-3">
+              <input
+                type="password"
+                class="form-control"
+                placeholder="Senha"
+                formControlName = "password"
+                [ngClass]="{
+                  'is-invalid': isFormSubmitted && formulario.controls['password'].errors?.['required'] ||
+                  isFormSubmitted && formulario.controls['password'].errors?.['pattern'] ||
+                  isFormSubmitted && formulario.controls['password'].errors?.['minlength']
+                }"
+              >
+              <div class="invalid-feedback">
+                <div *ngIf="isFormSubmitted && formulario.controls['password'].errors?.['required']">
+                  <p class="error-message ">Senha é obrigatório</p>
+                </div>
+                <div *ngIf="isFormSubmitted && formulario.controls['password'].errors?.['pattern']">
+                  <p class="error-message ">Senha Fraca, sua senha deve ter caracteres minúsculos, maiúsculos e numéricos</p>
+                </div>
+                <div *ngIf="isFormSubmitted && formulario.controls['password'].errors?.['minlength']">
+                  <p class="error-message ">Senha deve ter no minimo 8 caracteres</p>
+                </div>
+              </div>
+            </div>
+           <label class="col-3" for="inputName">Confirmar Senha:</label>
+            <div class="col-3">
+              <input
+                type="password"
+                class="form-control"
+                placeholder=" Confirmar Senha"
+                formControlName = "password_confirmation"
+                [ngClass]="{
+                  'is-invalid': isFormSubmitted && formulario.controls['password_confirmation'].errors?.['matching'] ||
+                  isFormSubmitted && formulario.controls['password_confirmation'].errors?.['required']
+                }"
+              >
+              <div class="invalid-feedback">
+                <div *ngIf="isFormSubmitted && formulario.controls['password_confirmation'].errors?.['required']">
+                  <p class="error-message ">Confirmação é obrigatório</p>
+                </div>
+                <div *ngIf="isFormSubmitted && formulario.controls['password_confirmation'].errors?.['matching']">
+                  Senhas não conferem
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group p-2">
+            <div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group p-3 d-flex justify-content-start">
+                    <a routerLink="/usuario" class="btn btn-primary btn-sm">cancelar</a>
+                  </div>
+                </div>
+                <div class="col-6" >
+                  <div class="form-group p-3 d-flex justify-content-end" *ngIf="idUsuario; else cadastrar">
+                    <button type="submit" class="btn btn-danger btn-sm">Editar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-template #cadastrar>
+              <div class="form-group p-3 d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-sm">Cadastrar</button>
+              </div>
+            </ng-template>
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+

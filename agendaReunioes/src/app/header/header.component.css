@@ -1,0 +1,11 @@
+.nav-link, .navbar-brand{
+  color: white;
+}
+.img-logo{
+  top: 5px;
+  left: 15px;
+  z-index: 1;
+}
+.bi{
+  padding-right: 5px ;
+}

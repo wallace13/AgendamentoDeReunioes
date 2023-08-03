@@ -1,0 +1,67 @@
+<!-- Header tela Inicial-->
+<div class="container" *ngIf="!logado">
+  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+      <img src="../../assets/agreuniao.png" alt="Bootstrap" width="40" height="40">
+      <span class="fs-4 ms-2">Agendamento de Reuniões</span>
+    </a>
+
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a  routerLink="/login" class="nav-link">Login</a></li>
+    </ul>
+  </header>
+</div>
+
+<div class="calendar">
+  <full-calendar class="calendar" [options]="calendarOptions">
+    <ng-template #eventContent let-arg>
+      <div data-bs-toggle="modal" data-bs-target="#modal" (click)="openModal(arg.event.extendedProps.evento)">
+        <div class="m-1 titles">
+          <b>
+            {{ arg.event.title }}
+          </b>
+          <p>Responsável: {{ arg.event.extendedProps.responsavel }} | Ramal: {{arg.event.extendedProps.evento?.ramal}}</p>
+        </div>
+      </div>
+    </ng-template>
+  </full-calendar>
+</div>
+<div class="row m-3">
+<span>
+    <b>Fale Conosco: </b>Nome do Encarregado
+    <a [cdkCopyToClipboard]="value"><i class="bi bi-envelope"></i></a> | 
+    <b>Ramal: </b>7211 
+  </span>
+</div>
+<!-- Modal -->
+<div [ngClass]="{ 'show': isModalOpen }" class="modal fade pe-none" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" >
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+          <i class="bi bi-circle-fill m-1" [style.color]="evento?.horarioInicial === '08:00:00' ? '#198754' : '#ffc107'"></i>
+          Reunião: {{evento?.assunto}}
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><i class="bi bi-clock m-2"></i>{{formatarDataExtenso(evento?.data)}} - {{formatarHorario(evento?.horarioInicial)}} às {{formatarHorario(evento?.horarioFinal)}}</p>
+        <p><i class="bi bi-people m-2"></i><b>Responsável: </b>{{evento?.responsavel}}</p>
+        <p><i class="bi bi-geo-alt-fill m-2"></i><b>Setor: </b>{{evento?.setor}}</p>
+        <p><i class="bi bi-telephone m-2"></i><b>Ramal: </b>{{evento?.ramal}}</p>
+        <p><i class="bi bi-wrench-adjustable m-2"></i>
+          <b>Assistência Técnica:</b>
+          <span class="text-success" *ngIf="evento?.assistencia == 1"> Solicitada</span>
+          <span class="text-danger" *ngIf="evento?.assistencia == 0"> Não Solicitada</span>
+        </p>
+        <p><i class="bi bi-camera-video m-2"></i>
+          <b>Video-Conferência: </b>
+          <span class="text-success" *ngIf="evento?.videoConferencia == true"> Solicitada</span>
+          <span class="text-danger" *ngIf="evento?.videoConferencia == false"> Não Solicitada</span>
+        </p>
+        <p><i class="bi bi-list-nested m-2"></i><b>Observações: </b>{{evento?.observacao}}</p>
+        <p><i class="bi bi-calendar-event m-2"></i><b>Agendado por: </b><span class="text-primary text-lowercase">{{evento?.name}}</span> em {{ formatarDataExtenso(evento?.created_at) }} - {{ formatarHora(evento?.created_at) }}</p>
+      </div>
+    </div>
+  </div>
+</div>

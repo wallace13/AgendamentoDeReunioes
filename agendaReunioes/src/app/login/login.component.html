@@ -1,0 +1,51 @@
+<div class="login d-flex align-items-center justify-content-center">
+  <div class="card">
+    <div class="card-header">
+      <div class="row">
+        <div class="logo d-flex align-items-center justify-content-center">
+          <img src="../../assets/agreuniao.png" alt="Bootstrap" width="80" height="80">
+        </div>
+      </div>
+      <div class="row">
+        <span  class="title d-flex align-items-center justify-content-center"><b><span class="text-uppercase">Agendamento de Reuniões</span></b></span>
+      </div>
+    </div>
+    <div class="card-body">
+      <form [formGroup] = "formulario" (ngSubmit)="login()">
+        <div class="form-group p-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Nome de Usuário"
+            maxlength="8"
+            formControlName = "userName"
+          >
+        </div>
+        <div class="form-group p-3">
+          <input
+            type="password"
+            class="form-control"
+            placeholder="Senha"
+            formControlName = "password"
+          >
+        </div>
+        <div *ngIf="formulario.controls['userName'].errors?.['required']">
+          <p class="error-message">E-mail é obrigatório</p>
+        </div>
+        <div class="form-group p-3">
+            <div class="row">
+              <div class="col d-flex justify-content-center">
+                <a routerLink="/" class="btn btn-primary d-flex align-items-center justify-content-center">Voltar</a>
+              </div>
+              <div class="col d-flex justify-content-center">
+                <button type="submit" class="btn btn-danger">Entrar</button>
+              </div>
+            </div>
+        </div>
+      </form>
+      <p class="small text-danger text-center" *ngIf="erroLogin">Credenciais inválidas!<br>Nome de usuário ou senha inválidos.
+    </div>
+  </div>
+</div>
+
+

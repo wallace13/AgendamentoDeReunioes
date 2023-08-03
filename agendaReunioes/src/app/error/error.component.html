@@ -1,0 +1,11 @@
+<div class="container d-flex align-items-center" style="height: 100vh;">
+  <div class="text-center mx-auto">
+    <h1 class="display-4" *ngIf="errorCode === '503'">Erro 503: Serviço Indisponível</h1>
+    <h1 class="display-4" *ngIf="errorCode === '422'">Erro 422: Credenciais inválidas</h1>
+    <h1 class="display-4" *ngIf="errorCode === '500' || errorCode === 'unknown'">Erro 500: Erro interno do servidor</h1>
+    <p class="lead">Desculpe, o serviço solicitado está temporariamente indisponível.</p>
+    <p *ngIf="errorCode === '422'">Nome de usuário ou senha inválidos.</p>
+    <p *ngIf="errorCode === '500' || errorCode === 'unknown'">Ocorreu um erro interno no servidor.</p>
+    <p>Tente novamente mais tarde.</p>
+  </div>
+</div>

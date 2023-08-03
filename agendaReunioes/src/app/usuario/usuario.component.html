@@ -1,0 +1,87 @@
+<div class="d-flex align-items-center justify-content-center ">
+    <div class="card mx-auto">
+    <div class="card-header">
+        <div class="row">
+            <div class="col">
+              Usuários
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-end">
+                    <a routerLink="/usuario/register" class="mr-3">Novo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div class="card-body">
+          <table class="table text-center" matSort (matSortChange)="sortData($event)">
+            <thead>
+              <tr>
+                <th scope="col" mat-sort-header="id">#</th>
+                <th scope="col" mat-sort-header="name">Nome</th>
+                <th scope="col" mat-sort-header="userName">Nome de Usuário</th>
+                <th scope="col" mat-sort-header="email">E-mail</th>
+                <th scope="col" mat-sort-header="ramal">Ramal</th>
+                <th scope="col" mat-sort-header="nivelPermissao">Nivel de Permissão</th>
+                <th scope="col" colspan="3" class="pe-none">Ações</th>
+              </tr>
+            </thead>
+            <tbody >
+              <tr *ngFor="let user of sortedData | paginate:{itemsPerPage: tableSize, currentPage: page, totalItems: count}; let i = index">
+                <th scope="row">{{user.id}}</th>
+                <td class="text-start">{{user.name}}</td>
+                <td>{{user.userName}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.ramal}}</td>
+                <td>
+                  <span *ngIf="user.nivelPermissao === 0">Administrador</span>
+                  <span *ngIf="user.nivelPermissao === 1">Usuário Administrativo</span>
+                  <span *ngIf="user.nivelPermissao === 2">Usuário Comum</span>
+                </td>
+                <td style="width: 1px;">
+                  <button title="Editar" class="btn btn-link" (click)="editar(user.id)">
+                    <i class="bi bi-pencil-square cursor-pointer"></i>
+                  </button>
+                </td>
+                <td style="width: 1px;">
+                  <button title="Deletar" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modal" (click)="openModal(user,'delete')">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+                <td style="width: 1px;">
+                  <button title="Reset Senha" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modal" (click)="openModal(user,'reset')">
+                    <i class="bi bi-unlock"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td *ngIf="users === undefined || users.length === 0" scope="col" colspan="9">Nenhuma Usuário Cadastrado</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="container d-flex align-items-center justify-content-center">
+            <pagination-controls class="mt-1 pt-2" previousLabel="Prev" nextLabel="Next" (pageChange)="onTableDataChange($event)"></pagination-controls>
+            <select (change)="onTableSizeChange($event)">
+              <option *ngFor="let size of tableSizes">{{ size }}</option>
+            </select>
+          </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+<div [ngClass]="{ 'show': isModalOpen }" class="modal fade pe-none" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel" *ngIf="situacao == 'delete'">Deseja confirmar a exclusão ?</h1>
+        <h1 class="modal-title fs-5" id="staticBackdropLabel" *ngIf="situacao == 'reset'">Deseja resetar senha do usuário {{usuario.name}}?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancelar</button>
+        <button (click)="deletar(usuario.id)" type="button" class="btn btn-primary" *ngIf="situacao == 'delete'">Confirmar</button>
+        <button (click)="resetSenha(usuario)" type="button" class="btn btn-primary" *ngIf="situacao == 'reset'">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

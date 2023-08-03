@@ -1,0 +1,85 @@
+<div class="registro d-flex align-items-center justify-content-center mt-5 mb-5">
+  <div class="card">
+    <div class="card-header">
+      {{ idHora ? 'Editar Horário' : 'Cadastrar Horário' }}
+    </div>
+    <div class="card-body">
+      <form [formGroup] = "formulario" (ngSubmit)="salvarHorario()">
+        <div class="form-group p-2 row">
+          <label class="col-5" for="inputName">Horário Inicial</label>
+          <div class="col-7">
+            <input
+              type="time"
+              class="form-control text-center"
+              placeholder="Horário Inicial"
+              formControlName = "horarioInicial"
+              [readonly]="idHora !== null"
+              [ngClass]="{
+                'is-invalid': isFormSubmitted && formulario.controls['horarioInicial'].errors?.['required'],
+                'campo-desativado': idHora !== null
+              }"
+            >
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['horarioInicial'].errors?.['required']">
+              <p class="error-message">Horário Inicial é obrigatório</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <label class="col-5" for="inputName">Horário Final:</label>
+          <div class="col-7">
+            <input
+              type="time"
+              class="form-control text-center"
+              placeholder="Horário Final"
+              formControlName = "horarioFinal"
+              [readonly]="idHora !== null"
+              [ngClass]="{
+                'is-invalid': isFormSubmitted && formulario.controls['horarioFinal'].errors?.['required'],
+                'campo-desativado': idHora !== null
+              }"
+            >
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['horarioFinal'].errors?.['required']">
+              <p class="error-message">Horário Final é obrigatório</p>
+            </div>
+          </div>
+        </div>
+        <div >
+          <div class="form-group p-2 row" *ngIf="idHora">
+            <label class="col-5" for="inputName">Situação:</label>
+            <div class="col-7">
+              <select
+              formControlName="ativo"
+              class="form-select form-select"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['ativo'].errors?.['required'] }"
+            >
+              <option [value]="1">Ativo</option>
+              <option [value]="0">Inativo</option>
+            </select>
+
+              <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['ativo'].errors?.['required']">
+                <p class="error-message">Horário é obrigatório</p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group p-3 d-flex justify-content-start">
+                <a routerLink="/horario" class="btn btn-primary btn-sm">cancelar</a>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group p-3 d-flex justify-content-end" *ngIf="idHora; else cadastrar">
+                <button type="submit" class="btn btn-danger btn-sm">Editar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #cadastrar>
+          <div class="form-group p-3 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary btn-sm">Cadastrar</button>
+          </div>
+        </ng-template>
+      </form>
+    </div>
+  </div>
+</div>

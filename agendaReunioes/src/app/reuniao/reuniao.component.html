@@ -1,0 +1,164 @@
+<div class="d-flex align-items-center justify-content-center">
+  <div class="card mx-auto">
+    <div class="card-header">
+      <div class="row">
+        <div class="col">
+          Minhas Reuniões
+        </div>
+        <div class="col">
+            <div class="d-flex justify-content-end">
+                <a routerLink="/reuniao/create/" class="mr-3">Novo</a>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="card-body"  >
+      <table class="table" matSort (matSortChange)="sortData($event)">
+        <thead class="table_header">
+          <tr>
+            <th scope="col" mat-sort-header="id">#</th>
+            <th scope="col" mat-sort-header="assunto">Assunto</th>
+            <th scope="col" mat-sort-header="responsavel">Responsável</th>
+            <th scope="col" mat-sort-header="setor">Setor</th>
+            <th scope="col" mat-sort-header="ramal">Ramal</th>
+            <th scope="col" mat-sort-header="data">Data</th>
+            <th scope="col" mat-sort-header="horarioInicial">Horário</th>
+            <th scope="col" colspan="3" class="pe-none">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="table_body">
+          <tr>
+            <td *ngIf="agendamentos === undefined || agendamentos.length === 0" scope="col" colspan="9">Nenhuma Reunião Agendada</td>
+          </tr>
+          <tr *ngFor="let agendamento of sortedData | paginate:{itemsPerPage: tableSize, currentPage: page, totalItems: count}; let i = index ">
+            <th scope="row">{{agendamento.id}}</th>
+            <td>{{agendamento.assunto}}</td>
+            <td>{{agendamento.responsavel}}</td>
+            <td>{{agendamento.setor}}</td>
+            <td>{{agendamento.ramal}}</td>
+            <td>{{formatarData(agendamento.data)}}</td>
+            <td>{{agendamento.horarioInicial}} às {{ agendamento.horarioFinal }}</td>
+            <td style="width: 1px;">
+              <button title="Visualizar" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modal" (click)="open(agendamento, 'view')">
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+            <td style="width: 1px;">
+              <button title="Editar" class="btn btn-link" (click)="editar(agendamento.id)">
+                <i class="bi bi-pencil-square cursor-pointer"></i>
+              </button>
+            </td>
+            <td style="width: 1px;">
+              <button title="Deletar" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modal" (click)="open(agendamento, 'delete')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="container d-flex align-items-center justify-content-center">
+        <pagination-controls class="mt-1 pt-2" previousLabel="Prev" nextLabel="Next" (pageChange)="onTableDataChange($event)"></pagination-controls>
+        <select (change)="onTableSizeChange($event)">
+          <option *ngFor="let size of tableSizes">{{ size }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal-->
+<div [ngClass]="{ 'show': isModalOpen }" class="modal fade pe-none" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel" *ngIf="situacao == 'delete'">Deseja confirmar a exclusão ?</h1>
+        <h1 class="modal-title fs-5" id="staticBackdropLabel" *ngIf="situacao == 'view'">Reunião</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="agendamento && situacao == 'view'">
+        <div class="container text-start">
+          <div class="row pb-2">
+            <div class="col-5 text-start">
+              <b>Assunto:</b>
+            </div>
+            <div class="col">
+             {{ agendamento.assunto }}
+            </div>
+          </div>
+          <div class="row pb-2">
+            <div class="col-5">
+              <b>Responsável:</b>
+            </div>
+            <div class="col">
+              {{ agendamento.responsavel }}
+            </div>
+          </div>
+          <div class="row pb-2">
+            <div class="col-5">
+              <b>Setor:</b>
+            </div>
+            <div class="col">
+              {{ agendamento.setor }}
+            </div>
+          </div>
+          <div class="row pb-2">
+            <div class="col-5">
+              <b>Ramal:</b>
+            </div>
+            <div class="col">
+              {{ agendamento.ramal }}
+            </div>
+          </div>
+          <div class="row pb-2">
+            <div class="col-5">
+              <b>Data:</b>
+            </div>
+            <div class="col">
+              {{formatarData(agendamento.data)}}
+            </div>
+          </div>
+          <div class="row pb-2">
+            <div class="col-5">
+              <b>Horário:</b>
+            </div>
+            <div class="col">
+              {{agendamento.horarioInicial}} às {{ agendamento.horarioFinal }}
+            </div>
+          </div>
+          <div class="row pb-2">
+            <div class="col-5">
+              <b>Assistência Técnica:</b>
+            </div>
+            <div class="col">
+              <span class="text-success" *ngIf="agendamento.assistencia == true">Solicitada</span>
+              <span class="text-danger" *ngIf="agendamento.assistencia == false">Não Solicitada</span>
+            </div>
+          </div>
+          <div class="row pb-2">
+            <div class="col-5">
+              <b>Video Conferência:</b>
+            </div>
+            <div class="col">
+              <span class="text-success" *ngIf="agendamento.videoConferencia == true">Solicitada</span>
+              <span class="text-danger" *ngIf="agendamento.videoConferencia == false">Não Solicitada</span>
+            </div>
+          </div>
+          <div class="row pb-2">
+            <div class="col-5">
+              <b>Observações:</b>
+            </div>
+            <div class="col ">
+              {{ agendamento.observacao }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" *ngIf="situacao == 'delete'">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancelar</button>
+        <button (click)="deletar(agendamento.id)" type="button" class="btn btn-primary">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

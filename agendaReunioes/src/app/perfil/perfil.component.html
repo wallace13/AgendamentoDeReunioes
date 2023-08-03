@@ -1,0 +1,154 @@
+<div class="d-flex align-items-center justify-content-center mt-5 mb-5">
+  <div class="card">
+    <div class="card-header text-center">
+      Informações do Usuário
+    </div>
+    <div class="card-body" *ngIf="usuarioLogado">
+      <div class="row  p-2">
+        <div class="col-6 text-end">
+          <span class="title">Nome:</span>
+        </div>
+        <div class="col-6">
+          <span>{{ usuarioLogado['name'] }}</span>
+        </div>
+      </div>
+      <div class="row p-2">
+        <div class="col-6 text-end">
+          <span class="title">Nome de Usuário:</span>
+        </div>
+        <div class="col-6">
+          <span>{{ usuarioLogado['userName'] }}</span>
+        </div>
+      </div>
+      <div class="row  p-2">
+        <div class="col-6 text-end">
+          <span class="title">E-mail:</span>
+        </div>
+        <div class="col-6">
+          <span>{{ usuarioLogado['email'] }}</span>
+        </div>
+      </div>
+      <div class="row  p-2">
+        <div class="col-6 text-end">
+          <span class="title">Ramal:</span>
+        </div>
+        <div class="col-6">
+          <span>{{ usuarioLogado['ramal'] }}</span>
+        </div>
+      </div>
+      <div class="row  p-2">
+        <div class="col-6 text-end">
+          <span class="title">Nivel de Permissao:</span>
+        </div>
+        <div class="col-6">
+          <span *ngIf="usuarioLogado['nivelPermissao'] === 0">Administrador</span>
+          <span *ngIf="usuarioLogado['nivelPermissao'] === 1">Usuário Asministrativo</span>
+          <span *ngIf="usuarioLogado['nivelPermissao'] === 2">Usuário Comum</span>
+        </div>
+      </div>
+      <div class="row  pt-5 p-2">
+        <div class="d-grid gap-2 col-6 mx-auto">
+          <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal" (click)="open(usuarioLogado)">Alterar Senha</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div [ngClass]="{ 'show': isModalOpen }" class="modal fade pe-none" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" >
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Alterar Senha</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup] = "formulario" (ngSubmit)="alterarSenha(usuarioLogado.id)">
+          <div class="row g-3 p-3 align-items-center">
+            <div class="col-4">
+              <label for="inputPassword6" class="col-form-label">Senha Atual:</label>
+            </div>
+            <div class="col-auto">
+              <input
+                type="password"
+                class="form-control"
+                placeholder="Senha Atual"
+                formControlName = "current_password"
+                [ngClass]="{
+                  'is-invalid': isFormSubmitted && formulario.controls['current_password'].errors?.['required'] || erroSenha
+                }"
+              >
+              <div class="invalid-feedback">
+                <div *ngIf="isFormSubmitted && formulario.controls['current_password'].errors?.['required']">
+                  <p class="error-message">Senha Atual é obrigatório</p>
+                </div>
+                <div *ngIf="isFormSubmitted && erroSenha">
+                  <p class="error-message">A senha não corresponde à atual</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row g-3 p-3 align-items-center">
+            <div class="col-4">
+              <label for="inputPassword6" class="col-form-label">Senha Nova:</label>
+            </div>
+            <div class="col-auto">
+              <input
+                type="password"
+                class="form-control"
+                placeholder="Senha"
+                formControlName = "password"
+                [ngClass]="{
+                  'is-invalid': isFormSubmitted && formulario.controls['password'].errors?.['required'] ||
+                  isFormSubmitted && formulario.controls['password'].errors?.['pattern'] ||
+                  isFormSubmitted && formulario.controls['password'].errors?.['minlength']
+                }"
+              >
+              <div class="invalid-feedback">
+                <div *ngIf="isFormSubmitted && formulario.controls['password'].errors?.['required']">
+                  <p class="error-message ">Senha é obrigatório</p>
+                </div>
+                <div *ngIf="isFormSubmitted && formulario.controls['password'].errors?.['pattern']">
+                  <p class="error-message ">Senha Fraca, sua senha deve ter caracteres minúsculos, maiúsculos e numéricos</p>
+                </div>
+                <div *ngIf="isFormSubmitted && formulario.controls['password'].errors?.['minlength']">
+                  <p class="error-message ">Senha deve ter no minimo 8 caracteres</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row g-3 p-3 align-items-center">
+            <div class="col-4">
+              <label for="inputPassword6" class="col-form-label">Confirmar Senha:</label>
+            </div>
+            <div class="col-auto">
+              <input
+                type="password"
+                class="form-control"
+                placeholder=" Confirmar Senha"
+                formControlName = "password_confirmation"
+                [ngClass]="{
+                  'is-invalid': isFormSubmitted && formulario.controls['password_confirmation'].errors?.['matching'] ||
+                  isFormSubmitted && formulario.controls['password_confirmation'].errors?.['required']
+                }"
+              >
+              <div class="invalid-feedback">
+                <div *ngIf="isFormSubmitted && formulario.controls['password_confirmation'].errors?.['required']">
+                  <p class="error-message ">Confirmação é obrigatório</p>
+                </div>
+                <div *ngIf="isFormSubmitted && formulario.controls['password_confirmation'].errors?.['matching']">
+                  <p class="error-message ">Senhas não conferem</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  (click)="closeModal()">cancelar</button>
+            <button type="submit" class="btn btn-primary">Confirmar</button>
+          </div>
+
+        </form>
+    </div>
+  </div>
+</div>

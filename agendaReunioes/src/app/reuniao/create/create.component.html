@@ -1,0 +1,195 @@
+<div class="d-flex align-items-center justify-content-center mt-3"  >
+  <div class="card">
+    <div class="card-header">
+      {{ idAgendamento ? 'Editar Reunião' : 'Agendar Reunião' }}
+    </div>
+    <div class="card-body">
+      <form [formGroup]="formulario" (ngSubmit)="salvaReuniao()">
+        <div class="form-group p-2 row">
+          <label class="col-3" for="inputName">Assunto:</label>
+          <div class="col-9">
+            <input
+              type="text"
+              class="form-control col-9"
+              placeholder="Assunto"
+              formControlName="assunto"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['assunto'].errors?.['required'] }"
+            >
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['assunto'].errors?.['required']">
+              <p class="error-message">Assunto é obrigatório</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <label class="col-3" for="inputName">Responsável:</label>
+          <div class="col-9">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Responsável"
+              formControlName="responsavel"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['responsavel'].errors?.['required'] }"
+            >
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['responsavel'].errors?.['required']">
+              <p class="error-message">Responsável é obrigatório</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <label class="col-3" for="inputName">Setor:</label>
+          <div class="col-3">
+            <select
+              formControlName="setor"
+              class="form-select form-select"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['setor'].errors?.['required'] }"
+            >
+              <option *ngFor="let setor of setores" [ngValue]="setor">
+                {{ setor }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['setor'].errors?.['required']">
+              <p class="error-message">Setor é obrigatório</p>
+            </div>
+          </div>
+          <label class="col-3" for="inputName">Ramal:</label>
+          <div class="col-3">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ramal"
+              maxlength="4"
+              placeholder="0000"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['ramal'].errors?.['required'] ||
+              isFormSubmitted && formulario.controls['ramal'].errors?.['pattern']
+            }"
+            >
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['ramal'].errors?.['required']">
+              <p class="error-message">Ramal é obrigatório</p>
+            </div>
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['ramal'].errors?.['pattern']">
+              <p class="error-message">Somente números</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <label class="col-3" for="inputName">Data:</label>
+          <div class="col-3">
+            <input
+              type="date"
+              id="data"
+              class="form-control date-clear form-text hasDatepicker date-popup-init"
+              placeholder="dd/MM/yyyy"
+              formControlName="data"
+              (change)="getHorariosData()"
+              min="{{ getCurrentDate() | date:'yyyy-MM-dd' }}"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['data'].errors?.['required'] }"
+            >
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['data'].errors?.['required']">
+              <p class="error-message">Data é obrigatório</p>
+            </div>
+          </div>
+          <label class="col-3" for="inputName">Horário da reunião:</label>
+          <div class="col-3" *ngIf="dataInserida === null || dataInserida === '' && horariosDisponiveis.length === 0 ">
+            <input
+              type="text"
+              class="form-control"
+              disabled
+              placeholder=""
+            >
+          </div>
+          <div class="col-3" *ngIf="dataInserida !== null && horariosDisponiveis.length === 0">
+            <input
+              type="text"
+              class="form-control"
+              disabled
+              placeholder="{{info}}"
+            >
+          </div>
+          <div class="col-3"  *ngIf="dataInserida !== null && dataInserida !== '' && horariosDisponiveis.length !== 0">
+            <select
+              formControlName="horario_id"
+              class="form-select form-select"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['horario_id'].errors?.['required'] }"
+            >
+              <option *ngFor="let horario of horariosDisponiveis" [value]="horario.id">
+               {{ horario.horarioInicial }} às {{ horario.horarioFinal }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isFormSubmitted && formulario.controls['horario_id'].errors?.['required']">
+              <p class="error-message">Horário é obrigatório</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <label class="col-4" for="inputName">Video Conferência:</label>
+          <div class="col-1 form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              formControlName="videoConferencia"
+              value="1"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['videoConferencia'].errors?.['required'] }"
+              [checked]="formulario.value.videoConferencia === 'true'"
+            >Sim
+          </div>
+          <div class="col-1 form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              formControlName="videoConferencia"
+              value="0"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['videoConferencia'].errors?.['required'] }"
+              [checked]="formulario.value.videoConferencia === 'false'"
+            >Não
+          </div>
+          <label class="col-4" for="inputName">Assintência Informática:</label>
+          <div class="col-1 form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              formControlName="assistencia"
+              value="1"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['assistencia'].errors?.['required'] }"
+              [checked]="formulario.value.assistencia === 'true'"
+            >Sim
+          </div>
+          <div class="col-1 form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              formControlName="assistencia"
+              value="0"
+              [ngClass]="{ 'is-invalid': isFormSubmitted && formulario.controls['assistencia'].errors?.['required'] }"
+              [checked]="formulario.value.assistencia === 'false'"
+            >Não
+          </div>
+        </div>
+        <div class="form-group p-2 row">
+          <div class="mb-2">
+            <label for="inputName" class="form-label">Observações: </label>
+            <textarea class="form-control" formControlName="observacao" rows="3" style="resize: none"></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group p-2 d-flex justify-content-start">
+                <a routerLink={{rota}} class="btn btn-primary btn-sm">cancelar</a>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group p-2 d-flex justify-content-end" *ngIf="idAgendamento; else cadastrar">
+                <button type="submit" class="btn btn-danger btn-sm">Editar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #cadastrar>
+          <div class="form-group p-2 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary btn-sm">Cadastrar</button>
+          </div>
+        </ng-template>
+      </form>
+    </div>
+  </div>
+</div>

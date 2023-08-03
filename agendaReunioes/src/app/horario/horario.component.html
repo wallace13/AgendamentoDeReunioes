@@ -1,0 +1,74 @@
+<div class="d-flex align-items-center justify-content-center">
+  <div class="card mx-auto">
+    <div class="card-header">
+      <div class="row">
+        <div class="col">
+          Horários
+        </div>
+        <div class="col">
+            <div class="d-flex justify-content-end">
+                <a routerLink="/horario/create/" class="mr-3">Novo</a>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="card-body"  >
+      <table class="table">
+        <thead class="table_header" matSort (matSortChange)="sortData($event)">
+          <tr>
+            <th scope="col" mat-sort-header="id">#</th>
+            <th scope="col" mat-sort-header="horarioInicial">Horário Inicial</th>
+            <th scope="col" mat-sort-header="horarioFinal">Horário Final</th>
+            <th scope="col" mat-sort-header="ativo">Status</th>
+            <th scope="col" colspan="2" class="pe-none">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="table_body">
+          <tr>
+            <td *ngIf="horarios === undefined || horarios.length === 0" scope="col" colspan="10">Nenhum Horário Cadastrado</td>
+          </tr>
+          <tr *ngFor="let horario of sortedData | paginate:{itemsPerPage: tableSize, currentPage: page, totalItems: count}; let i = index">
+            <th scope="row">{{horario.id}}</th>
+            <td>{{horario.horarioInicial}}</td>
+            <td>{{horario.horarioFinal}}</td>
+            <td>
+              <span *ngIf="!!horario.ativo">Ativo</span>
+              <span *ngIf="!horario.ativo">Inativo</span>
+            </td>
+            <td style="width: 1px;">
+              <button title="Editar" class="btn btn-link" (click)="editar(horario.id)">
+                <i class="bi bi-pencil-square cursor-pointer"></i>
+              </button>
+            </td>
+            <td style="width: 1px;">
+              <button title="Deletar" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modal" (click)="openModal(horario.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="container d-flex align-items-center justify-content-center">
+        <pagination-controls class="mt-1 pt-2" previousLabel="Prev" nextLabel="Next" (pageChange)="onTableDataChange($event)"></pagination-controls>
+        <select (change)="onTableSizeChange($event)">
+          <option *ngFor="let size of tableSizes">{{ size }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div [ngClass]="{ 'show': isModalOpen }" class="modal fade pe-none" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Deseja confirmar a exclusão ?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancelar</button>
+        <button (click)="deletar(idHorario)" type="button" class="btn btn-primary">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>

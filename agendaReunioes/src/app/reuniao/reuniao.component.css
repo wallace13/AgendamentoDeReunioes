@@ -1,0 +1,20 @@
+.card{
+  margin-top: 3%;
+  margin-bottom: 5%;
+}
+.table{
+  width: 1000px;
+}
+.table_header{
+  text-align: center !important;
+}
+.table_body{
+  text-align: center;
+}
+thead>tr>th {
+  cursor: pointer;
+}
+thead>tr>th:hover {
+  color: #fff;
+  background-color: #2199e8;
+}
